@@ -44,7 +44,7 @@ func main(){
                     switch item := tr.Event.(type) {
                         case map[string]interface{}:  Eventid = fmt.Sprintf( "%s", item["eventid"] )
                     }
-                    fmt.Printf( " %-30s %s  %-20s %s (%s)  (%s,%s,%s,%s) %s\n", tr.Host[0].Name, tms, tr.Host[0].Code, tr.Description, tr.Comments, tr.Triggerid, tr.Priority, tr.Status, Eventid, tr.Val
+                    fmt.Printf( " %-30s %s  %-20s %s (%s)  (%s,%s,%s,%s) %s\n", tr.Host[0].Name, tms, tr.Host[0].Code, tr.Description, tr.Comments, tr.Triggerid, tr.Priority, tr.Status, Eventid, tr.Value )
                     trCnt++
                 }
                 trAllCnt++
