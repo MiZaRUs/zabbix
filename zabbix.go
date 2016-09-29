@@ -31,19 +31,20 @@ type ZHost struct {	// hosts
 }
 //  --
 type ZTrigger struct {
-    Description string `json:"description"`
-    Triggerid   string `json:"triggerid"`
-    Priority    string `json:"priority"`
-    Lastchange  string `json:"lastchange"`
-    Status      string `json:"status"`
-    Value       string `json:"value"`
-    Host       []ZHost `json:"hosts"`
-    Comments    string `json:"comments"`
-//    Templateid  string `json:"templateid"`
-//    Types       string `json:"type"`
-//    State       string `json:"state"`
-//    Flags       string `json:"flags"`
-//    Error       string `json:"error"`
+    Description string  `json:"description"`
+    Triggerid   string  `json:"triggerid"`
+    Priority    string  `json:"priority"`
+    Lastchange  string  `json:"lastchange"`
+    Status      string  `json:"status"`
+    Value       string  `json:"value"`
+    Host       []ZHost  `json:"hosts"`
+    Event   interface{} `json:"lastEvent"`
+    Comments    string  `json:"comments"`
+//    Templateid  string  `json:"templateid"`
+//    Types       string  `json:"type"`
+//    State       string  `json:"state"`
+//    Flags       string  `json:"flags"`
+//    Error       string  `json:"error"`
 }
 //  --
 type ZHistory struct {
@@ -131,7 +132,7 @@ func ( z *Zabbix ) Close(){ // Закрытие сессии
 //  -------------------------------------------------------------------------
 func ( z *Zabbix ) GetTrigger( gr string )( []*ZTrigger, error ){
     if gr != "" { gr += "," }
-    zq := `"method":"trigger.get","params":{"active":"1","only_true":"1","expandData":"1","selectHosts":["host","name"],`+gr+`"output":"extend"}`
+    zq := `"method":"trigger.get","params":{"active":"1","only_true":"1","expandData":"1","selectHosts":["host","name"],"selectLastEvent":["eventid"],`+gr+`"output":"extend"}`
 //  --
     type qtriggers struct {
         Err ZError      `json:"error"`
@@ -140,6 +141,9 @@ func ( z *Zabbix ) GetTrigger( gr string )( []*ZTrigger, error ){
 //  --
     trs := qtriggers{}
     zstr, err := z.rcall( zq )
+
+//fmt.Printf( "zbx: %q\n", zstr )
+
     if err == nil {
         err = json.Unmarshal( zstr, &trs )
         if err == nil && trs.Err.Code != 0 {
