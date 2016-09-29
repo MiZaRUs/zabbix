@@ -40,7 +40,11 @@ func main(){
                 if ( !invalidHosts.MatchString( tr.Host[0].Code ))&&( !invalidNames.MatchString( tr.Description )){
                     i, _ := strconv.Atoi( tr.Lastchange )
                     tms := time.Unix( int64(i), 0).Format("2006-01-02 15:04:05")
-                    fmt.Printf( " %-30s %s  %-20s %s (%s)  (%s,%s,%s) %s\n", tr.Host[0].Name, tms, tr.Host[0].Code, tr.Description, tr.Comments, tr.Triggerid, tr.Priority, tr.Status, tr.Val
+                    Eventid := ""
+                    switch item := tr.Event.(type) {
+                        case map[string]interface{}:  Eventid = fmt.Sprintf( "%s", item["eventid"] )
+                    }
+                    fmt.Printf( " %-30s %s  %-20s %s (%s)  (%s,%s,%s,%s) %s\n", tr.Host[0].Name, tms, tr.Host[0].Code, tr.Description, tr.Comments, tr.Triggerid, tr.Priority, tr.Status, Eventid, tr.Val
                     trCnt++
                 }
                 trAllCnt++
