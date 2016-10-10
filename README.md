@@ -23,7 +23,7 @@ func main(){
     var invalidNames = regexp.MustCompile( `(Zabbix|Ошибка загрузки|Oracle - PGA)` )
 
 // Инициируем подключение
-    zbx, err := zabbix.New( "192.168.100.182", "script-user", "test" )
+    zbx, err := zabbix.New( "192.168.100.100", "user", "pswd" )
     if err != nil {
         fmt.Printf("ERROR: %s\n", err )
     }else{
