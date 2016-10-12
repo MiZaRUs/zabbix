@@ -1,4 +1,4 @@
-# GO zabbix_get
+# GO Zabbix Get
 Простой модуль получения данных от zabbix.
 
 Пример запросов:
