@@ -173,7 +173,7 @@ func ( z *Zabbix ) GetHostId( hosts string )( string, error ){
         }
 //fmt.Printf( "\nzbxGetHostId: %s\n\n", qtr.Res[0].Id )
     }
-    if err == nil {
+    if err == nil && len(qtr.Res) > 0 {
         return qtr.Res[0].Id, nil
     }
 return "", err
