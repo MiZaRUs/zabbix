@@ -53,6 +53,21 @@ func main(){
     fmt.Printf( "\nТриггеров получено: %d, выбрано: %d, игнорировано: %d\n\n", trAllCnt, trCnt, (trAllCnt - trCnt) )
 //  --
 
+
+//  Получаем все хосты с интерфейсами из группы 2, или без группы ""
+        hsx, err := zbx.GetHosts( `,"groupids":"2"` )
+        if err != nil {
+            fmt.Printf( "EROOR: %s\n", err )
+        }else{
+            for cn, hs := range hsx {
+                fmt.Printf( "%d \t %s\t  %s\t %s\t %s\t %s\n", (cn+1), hs.Id, hs.Name, hs.Code, hs.If, hs.Status )
+            }
+        }
+        fmt.Println()
+    }
+//  --
+
+
 // Получаем историю по указанному хосту
         hist, err := zbx.GetHistory( "abcd-db" )
         if err != nil {

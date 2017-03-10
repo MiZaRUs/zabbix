@@ -30,6 +30,18 @@ type ZHost struct {	// hosts
     Id   string `json:"hostid"`
 }
 //  --
+type Interfaces struct {
+    DNS  string `json:"dns"`
+    Ip   string `json:"ip"`
+    Port string `json:"port"`
+}
+//  --
+type XZHost struct {
+    ZHost
+    If     []Interfaces  `json:"interfaces"`
+    Status  string  `json:"status"`
+}
+//  --
 type ZTrigger struct {
     Description string  `json:"description"`
     Triggerid   string  `json:"triggerid"`
@@ -154,14 +166,10 @@ return trs.Res, err
 }
 //  -------------------------------------------------------------------------
 func ( z *Zabbix ) GetHostId( hosts string )( string, error ){
-    type zHostid struct {
-        Id      string    `json:"hostid"`
-        Host    string    `json:"host"`
-        Name    string    `json:"name"`
-    }
+//  --
     type qHostid struct {
         Err ZError     `json:"error"`
-        Res []*zHostid `json:"result"`
+        Res []*ZHost   `json:"result"`
     }
 //  --
     qtr := qHostid{}
@@ -188,7 +196,6 @@ func ( z *Zabbix ) GetHistory( hosts string )( []*ZHistory, error ){
     qtr := qHistory{}
     hid, err := z.GetHostId( hosts )
     if err == nil {
-//  --
 //fmt.Printf( "HostId: %s\n", hid )
 //  --
         zstr, err := z.rcall( `"method":"history.get","params":{"history":4,"limit":80,"sortfield":"clock","sortorder":"DESC","hostids":"`+hid+`"}` )
@@ -201,5 +208,29 @@ func ( z *Zabbix ) GetHistory( hosts string )( []*ZHistory, error ){
     }
 return qtr.Res, err
 }
+//  -------------------------------------------------------------------------
+func ( z *Zabbix ) GetHosts( prm string )( []*XZHost, error ){
+//  --
+    type qHostid struct {
+        Err ZError     `json:"error"`
+        Res []*XZHost  `json:"result"`
+    }
+//  --
+    qtr := qHostid{}
+//    params := `"method":"host.get","params":{"output":["hostid","host","name","status"],"selectInterfaces":"extend"}`
+    params := `"method":"host.get","params":{"output":["hostid","host","name","status"]`+ prm +`,"selectInterfaces":"extend"}`
+//fmt.Printf( "\nzbxGetHostId: %s\n\n", params )
+    zstr, err := z.rcall( params )
+//fmt.Printf( "\nzbxGetHostId: %s\n\n", zstr )
+    if err == nil {
+        err = json.Unmarshal( zstr, &qtr )
+        if err == nil && qtr.Err.Code != 0 {
+            err = fmt.Errorf( "GetHostId: %s %s\n", qtr.Err.Message, qtr.Err.Data )
+        }
+//fmt.Printf( "\nzbxGetHostId: %s\n\n", qtr.Res )
+    }
+return qtr.Res, err
+}
+//  -------------------------------------------------------------------------
 //===========================================================================
 //===========================================================================
